@@ -33,24 +33,26 @@ const double _kDurationPickerHeightLandscape = 320.0;
 
 const double _kTwoPi = 2 * math.pi;
 
-enum DurationPickerMode { Day, Hour, Minute, Second, MilliSecond, MicroSecond }
+enum DurationPickerMode { Day, Hour, Minute, Second } // MilliSecond, MicroSecond
 
 extension _DurationPickerModeExtenstion on DurationPickerMode {
   static const nextItems = {
     DurationPickerMode.Day: DurationPickerMode.Hour,
     DurationPickerMode.Hour: DurationPickerMode.Minute,
     DurationPickerMode.Minute: DurationPickerMode.Second,
-    DurationPickerMode.Second: DurationPickerMode.MilliSecond,
-    DurationPickerMode.MilliSecond: DurationPickerMode.MicroSecond,
-    DurationPickerMode.MicroSecond: DurationPickerMode.Day,
+    DurationPickerMode.Second: DurationPickerMode.Day,
+    // DurationPickerMode.Second: DurationPickerMode.MilliSecond,
+    // DurationPickerMode.MilliSecond: DurationPickerMode.MicroSecond,
+    // DurationPickerMode.MicroSecond: DurationPickerMode.Day,
   };
   static const prevItems = {
-    DurationPickerMode.Day: DurationPickerMode.MicroSecond,
+    // DurationPickerMode.Day: DurationPickerMode.MicroSecond,
+    DurationPickerMode.Day: DurationPickerMode.Second,
     DurationPickerMode.Hour: DurationPickerMode.Day,
     DurationPickerMode.Minute: DurationPickerMode.Hour,
     DurationPickerMode.Second: DurationPickerMode.Minute,
-    DurationPickerMode.MilliSecond: DurationPickerMode.Second,
-    DurationPickerMode.MicroSecond: DurationPickerMode.MilliSecond,
+    // DurationPickerMode.MilliSecond: DurationPickerMode.Second,
+    // DurationPickerMode.MicroSecond: DurationPickerMode.MilliSecond,
   };
 
   DurationPickerMode? get next => nextItems[this];
@@ -265,13 +267,13 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
         fraction =
             (value / Duration.secondsPerMinute) % Duration.secondsPerMinute;
         break;
-      case DurationPickerMode.MilliSecond:
-        fraction = (value / Duration.millisecondsPerSecond) %
-            Duration.millisecondsPerSecond;
-        break;
-      case DurationPickerMode.MicroSecond:
-        fraction = (value / Duration.microsecondsPerMillisecond) %
-            Duration.microsecondsPerMillisecond;
+      // case DurationPickerMode.MilliSecond:
+      //   fraction = (value / Duration.millisecondsPerSecond) %
+      //       Duration.millisecondsPerSecond;
+      //   break;
+      // case DurationPickerMode.MicroSecond:
+      //   fraction = (value / Duration.microsecondsPerMillisecond) %
+      //       Duration.microsecondsPerMillisecond;
 
         break;
       default:
@@ -297,13 +299,13 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
         result = (fraction * Duration.secondsPerMinute).round() %
             Duration.secondsPerMinute;
         break;
-      case DurationPickerMode.MilliSecond:
-        result = (fraction * Duration.millisecondsPerSecond).round() %
-            Duration.millisecondsPerSecond;
-        break;
-      case DurationPickerMode.MicroSecond:
-        result = (fraction * Duration.microsecondsPerMillisecond).round() %
-            Duration.microsecondsPerMillisecond;
+      // case DurationPickerMode.MilliSecond:
+      //   result = (fraction * Duration.millisecondsPerSecond).round() %
+      //       Duration.millisecondsPerSecond;
+      //   break;
+      // case DurationPickerMode.MicroSecond:
+      //   result = (fraction * Duration.microsecondsPerMillisecond).round() %
+      //       Duration.microsecondsPerMillisecond;
         break;
       default:
         result = -1;
@@ -517,15 +519,15 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
         primaryLabels = _buildMinutes(theme.textTheme, primaryLabelColor);
         secondaryLabels = _buildMinutes(theme.textTheme, secondaryLabelColor);
         break;
-      case DurationPickerMode.MilliSecond:
-        selectedDialValue = widget.value;
-        primaryLabels = _buildMSeconds(theme.textTheme, primaryLabelColor);
-        secondaryLabels = _buildMSeconds(theme.textTheme, secondaryLabelColor);
-        break;
-      case DurationPickerMode.MicroSecond:
-        selectedDialValue = widget.value;
-        primaryLabels = _buildMSeconds(theme.textTheme, primaryLabelColor);
-        secondaryLabels = _buildMSeconds(theme.textTheme, secondaryLabelColor);
+      // case DurationPickerMode.MilliSecond:
+      //   selectedDialValue = widget.value;
+      //   primaryLabels = _buildMSeconds(theme.textTheme, primaryLabelColor);
+      //   secondaryLabels = _buildMSeconds(theme.textTheme, secondaryLabelColor);
+      //   break;
+      // case DurationPickerMode.MicroSecond:
+      //   selectedDialValue = widget.value;
+      //   primaryLabels = _buildMSeconds(theme.textTheme, primaryLabelColor);
+      //   secondaryLabels = _buildMSeconds(theme.textTheme, secondaryLabelColor);
         break;
       default:
         selectedDialValue = -1;
@@ -948,7 +950,8 @@ class _DurationPicker extends State<DurationPicker> {
               currentDurationType.name,
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
-            currentDurationType == DurationPickerMode.MicroSecond
+            // currentDurationType == DurationPickerMode.MicroSecond
+            false
                 ? Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(200),
@@ -1065,40 +1068,40 @@ class _DurationPicker extends State<DurationPicker> {
                     )
                   ],
                 ),
-                SizedBox(
-                  height: 6,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _ShowTimeArgs(
-                      durationMode: DurationPickerMode.MilliSecond,
-                      onChanged: updateValue,
-                      onTextChanged: updateDurationFields,
-                      value: milliseconds,
-                      formatWidth: 3,
-                      desc: "milliseconds",
-                      isEditable:
-                          currentDurationType == DurationPickerMode.MicroSecond,
-                      start: 0,
-                      end: 999,
-                    ),
-                    getColonWidget(),
-                    _ShowTimeArgs(
-                      durationMode: DurationPickerMode.MicroSecond,
-                      onChanged: updateValue,
-                      onTextChanged: updateDurationFields,
-                      value: microseconds,
-                      formatWidth: 3,
-                      desc: 'microseconds',
-                      isEditable:
-                          currentDurationType == DurationPickerMode.MicroSecond,
-                      start: 0,
-                      end: 999,
-                    )
-                  ],
-                ),
+                // SizedBox(
+                //   height: 6,
+                // ),
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     _ShowTimeArgs(
+                //       durationMode: DurationPickerMode.MilliSecond,
+                //       onChanged: updateValue,
+                //       onTextChanged: updateDurationFields,
+                //       value: milliseconds,
+                //       formatWidth: 3,
+                //       desc: "milliseconds",
+                //       isEditable:
+                //           currentDurationType == DurationPickerMode.MicroSecond,
+                //       start: 0,
+                //       end: 999,
+                //     ),
+                //     getColonWidget(),
+                //     _ShowTimeArgs(
+                //       durationMode: DurationPickerMode.MicroSecond,
+                //       onChanged: updateValue,
+                //       onTextChanged: updateDurationFields,
+                //       value: microseconds,
+                //       formatWidth: 3,
+                //       desc: 'microseconds',
+                //       isEditable:
+                //           currentDurationType == DurationPickerMode.MicroSecond,
+                //       start: 0,
+                //       end: 999,
+                //     )
+                //   ],
+                // ),
                 SizedBox(
                   width: 2,
                   height: 4,
@@ -1125,10 +1128,10 @@ class _DurationPicker extends State<DurationPicker> {
         return minutes;
       case DurationPickerMode.Second:
         return seconds;
-      case DurationPickerMode.MilliSecond:
-        return milliseconds;
-      case DurationPickerMode.MicroSecond:
-        return microseconds;
+      // case DurationPickerMode.MilliSecond:
+      //   return milliseconds;
+      // case DurationPickerMode.MicroSecond:
+      //   return microseconds;
       default:
         return -1;
     }
@@ -1149,12 +1152,12 @@ class _DurationPicker extends State<DurationPicker> {
         case DurationPickerMode.Second:
           seconds = value;
           break;
-        case DurationPickerMode.MilliSecond:
-          milliseconds = value;
-          break;
-        case DurationPickerMode.MicroSecond:
-          microseconds = value;
-          break;
+        // case DurationPickerMode.MilliSecond:
+        //   milliseconds = value;
+        //   break;
+        // case DurationPickerMode.MicroSecond:
+        //   microseconds = value;
+        //   break;
       }
       currentValue = value;
     });
@@ -1392,9 +1395,9 @@ class _ShowTimeArgsState extends State<_ShowTimeArgs> {
       case DurationPickerMode.Minute:
       case DurationPickerMode.Second:
         return 45;
-      case DurationPickerMode.MilliSecond:
-      case DurationPickerMode.MicroSecond:
-        return 56;
+      // case DurationPickerMode.MilliSecond:
+      // case DurationPickerMode.MicroSecond:
+      //   return 56;
       case DurationPickerMode.Day:
         return 100;
       default:
